@@ -1,0 +1,261 @@
+https://int6.darkorbit.com/indexInternal.es?action=internalStart
+  //////////////////////////////////////////////////////////////as3魔法师分析:
+  ////////////////////////////////setSecretKey的来源
+ public function setSecretKey(key:ByteArray, encPrime:BigInteger, privateKey:BigInteger) 208239
+ --->            this._SafeStr_14578.setSecretKey(_arg_1, _arg_2, _arg_3); 212308//此方法包含于类 _SafeStr_1613
+ ---->			 this._SafeStr_14578 = new _SafeStr_1613();
+ ----->			 
+		public function _SafeStr_3398(_arg_1:ByteArray, _arg_2:BigInteger, _arg_3:BigInteger):void{
+            this._SafeStr_14578.setSecretKey(_arg_1, _arg_2, _arg_3);//查找_SafeStr_3398被调用的地方
+        }
+ ------>
+		public function _SafeStr_12154(_arg_1:ByteArray, _arg_2:BigInteger, _arg_3:BigInteger):void{
+            this._SafeStr_3309._SafeStr_3336._SafeStr_3398(_arg_1, _arg_2, _arg_3);// 查找_SafeStr_12154来源
+        }
+ -------->
+		public static function run(_arg_1:_SafeStr_795):void{// 查找run的来源
+            var _local_2:_SafeStr_58 = _SafeStr_4106._SafeStr_3503();// _SafeStr_4106,_SafeStr_152是父类_SafeStr_164中的字段
+            var _local_3:BigInteger = _local_2._SafeStr_12153();// 查找父类的赋值
+            var _local_4:BigInteger = _SafeStr_152._SafeStr_3338;
+            _local_2._SafeStr_12154(_arg_1._SafeStr_12155, _local_4, _local_3);
+            goto _label_2;
+            do  {
+                _local_2._SafeStr_3329 = true;
+                _local_2._SafeStr_12156();
+                return;
+                
+            _label_1: 
+                _local_2._SafeStr_3308(_SafeStr_58._SafeStr_3301);
+            } while (true);
+            
+        _label_2: 
+            _local_2._SafeStr_12157();
+            _local_2._SafeStr_12158();
+            goto _label_1;
+        }
+---------->
+	public class _SafeStr_164 {
+
+        protected static var _SafeStr_4106:_SafeStr_13;
+        protected static var _SafeStr_4928:_SafeStr_63;
+
+
+        public static function _SafeStr_3311(_arg_1:_SafeStr_13):void{//这里是静态函数,即函数名.方法
+            _SafeStr_4106 = _arg_1;
+        }
+
+        public static function _SafeStr_6615(_arg_1:_SafeStr_63):void{
+            _SafeStr_4928 = _arg_1;
+        }
+
+        protected static function get map():_SafeStr_123{
+            return (_SafeStr_56.getInstance().map);
+        }
+
+        public static function get main():_SafeStr_13{
+            return (_SafeStr_4106);
+        }
+
+
+        public function _SafeStr_6869(_arg_1:Vector.<String>):void{
+        }
+
+
+    }
+------------->
+	public class _SafeStr_1196 extends AsyncCommand {
+		private function _SafeStr_6614(_arg_1:_SafeStr_57):void{
+            var _local_2:_SafeStr_13 = _arg_1.main;
+            var _local_3:_SafeStr_63 = _SafeStr_63.getInstance();
+            var _local_4:Stage = _arg_1.stage;
+            _local_4.stageFocusRect = false;
+            _local_4.align = StageAlign.TOP_LEFT;
+            _local_4.scaleMode = StageScaleMode.NO_SCALE;
+            _local_4.frameRate = 60;
+            _SafeStr_1786._SafeStr_3311(_local_2);
+            _SafeStr_56.getInstance().init(_local_2);
+            _SafeStr_126._SafeStr_3311(_local_2);
+            _SafeStr_164._SafeStr_3311(_local_2);//////////////////////////赋值
+            _SafeStr_117.init(_local_2);
+            _SafeStr_164._SafeStr_6615(_local_3);/////////////////////////赋值
+            TweenPlugin.activate([TransformAroundCenterPlugin, ColorTransformPlugin, DynamicPropsPlugin, GlowFilterPlugin, TransformAroundCenterPluginIDisplayObject, TransformAroundPointPluginIDisplayObject, DynamicPropsPluginFactory]);
+            _local_2._SafeStr_3327 = _SafeStr_56.getInstance();
+            _local_2._SafeStr_3067 = new _SafeStr_54(_local_2);
+        }
+--------------->
+		override public function execute(_arg_1:INotification):void{
+            var _local_2:_SafeStr_57 = (_arg_1.getBody() as _SafeStr_57);
+            this._SafeStr_6614(_local_2);/////////////////////这里被调用,查找execute被调用的地方
+            commandComplete();
+        }
+	}
+----------------->
+	public class _SafeStr_228 extends AsyncMacroCommand {
+
+        override protected function initializeAsyncMacroCommand():void{
+            addSubCommand(_SafeStr_1181);
+            addSubCommand(MapAssetSystemStartup);
+            addSubCommand(_SafeStr_1187);
+            addSubCommand(_SafeStr_1194);
+            addSubCommand(_SafeStr_1198);
+            addSubCommand(_SafeStr_1196);//////////////////////////////////消息被添加
+            addSubCommand(_SafeStr_1191);
+            addSubCommand(_SafeStr_1185);
+            addSubCommand(_SafeStr_1184);
+            addSubCommand(_SafeStr_1200);
+            addSubCommand(_SafeStr_221);
+            addSubCommand(_SafeStr_1192);
+            addSubCommand(InitGuiCommand);
+            addSubCommand(_SafeStr_1197);
+            addSubCommand(_SafeStr_1188);
+            addSubCommand(InitAssetsProxyCommand);
+            addSubCommand(_SafeStr_1201);
+            addSubCommand(_SafeStr_1199);
+            addSubCommand(_SafeStr_1183);
+            addSubCommand(_SafeStr_1182);
+            addSubCommand(_SafeStr_1193);
+            addSubCommand(_SafeStr_1186);
+            addSubCommand(_SafeStr_1195);
+        }
+    }
+		////////////////////////////////////////
+	public class MacroCommand extends Notifier implements ICommand, INotifier {
+
+        private var subCommands:Array;
+
+        public function MacroCommand(){
+            subCommands = new Array();
+            initializeMacroCommand();
+        }
+
+        final public function execute(_arg_1:INotification):void{// 如果消息.getName()=="ApplicationNotificationName",找到对应类并执行
+            var _local_2:Class;
+            var _local_3:ICommand;
+            while (subCommands.length > 0) {
+                _local_2 = subCommands.shift();
+                _local_3 = new (_local_2)();
+                _local_3.initializeNotifier(multitonKey);////////////////////这里执行，上层函数就会执行。也有可能类被继承，然后执行，是其中一个被执行还是全部？
+                _local_3.execute(_arg_1);
+            };
+        }
+
+        protected function addSubCommand(_arg_1:Class):void{
+            subCommands.push(_arg_1);
+        }
+
+        protected function initializeMacroCommand():void{
+        }
+
+
+    }
+------------------>
+public class _SafeStr_63 extends Facade implements IFacade {//_SafeStr_63 = "_-u1h"
+	    override protected function initializeController():void{
+            super.initializeController();////////////////////////////////问题:注册之后 何时运行？
+            registerCommand(_SafeStr_59.STARTUP, _SafeStr_228);// _SafeStr_59 = "_-V3P" (String#40717, DoABC#2)
+			// public static const STARTUP:String = (NAME + "Startup"); NAME:String = "ApplicationNotification";
+			// _SafeStr_59.STARTUP ="ApplicationNotificationStartup";
+            registerCommand(GameNotifications.HERO_INIT, _SafeStr_223);
+            registerCommand(GameNotifications.CONNECTION_LOST, _SafeStr_226);
+            registerCommand(KeyboardNotifications.LOCK_KEYBOARD, LockKeyboardCommand);
+            registerCommand(KeyboardNotifications.UNLOCK_KEYBOARD, UnlockKeyboardCommand);
+            registerCommand(_SafeStr_230.READY, _SafeStr_216);
+            registerCommand(JavaScriptCallNotification.ADD_DELAYED_CALLBACK, AddJavaScriptDelayedCallbackCommand);
+            registerCommand(JavaScriptCallNotification.CALL_JAVA_SCRIPT, JavaScriptCommand);
+            registerCommand(ConnectionNotifications.INIT, _SafeStr_221);
+            registerCommand(ConnectionNotifications.READY, NetControllerPrepCommand);
+            registerCommand(MapNotification.NEW_MAP_INIT_FINISHED, _SafeStr_220);
+            registerCommand(MapAssetNotification.DESELECT_TARGET, DeselectTargetCommand);
+            registerCommand(MapAssetNotification.ABORT_LASER_ATTACK, AbortLaserAttackCommand);
+            registerCommand(AssetNotifications.UNLOAD_FINISHER_PROXY_READY, InitUnloadFinisherCommand);
+            registerCommand(ScreenNotifications.FULLSCREEN_CHANGE, FullScreenOffCommand);
+            registerCommand(ScreenNotifications.FULLSCREEN_CHANGE_COMPLETE, FullScreenChangeCompleteCommand);
+            registerCommand(ScreenNotifications.SCREEN_VIEWPORT_RESIZED, ScreenViewportResizedCommand);
+            registerCommand(TDMResultWindowNotifications.SHOW, _SafeStr_229);
+            registerCommand(TDMStatusNotification.UPDATE, _SafeStr_225);
+            registerCommand(_SafeStr_218.INIT, _SafeStr_224);
+            registerCommand(HintsNotifications._SafeStr_3628, _SafeStr_222);
+            registerCommand(SoundNotifications.PLAY_SOUND_TRIGGER_MODULE, PlaySoundTriggerModuleCommand);
+            registerCommand(HelpVideoNotification.SHOW, _SafeStr_227);
+        }
+	}
+	////////////////////////////////////////////////
+	public class Facade implements IFacade {
+	    public function registerCommand(_arg_1:String, _arg_2:Class):void{
+            controller.registerCommand(_arg_1, _arg_2);// 两个参数分别是 "ApplicationNotificationStartup", 类名_SafeStr_59
+        }
+		protected function initializeController():void{
+            if (controller != null){
+                return;
+            };
+            controller = Controller.getInstance(multitonKey);////////////////////////////////////////
+        }
+	}
+	////////////////////////////////////////////////////
+	    public function registerCommand(_arg_1:String, _arg_2:Class):void{
+            if (commandMap[_arg_1] == null){
+                view.registerObserver(_arg_1, new Observer(executeCommand, this));//////////////////////
+            };// 两个参数分别是 "ApplicationNotificationStartup", 类名_SafeStr_59
+            commandMap[_arg_1] = _arg_2;
+        }
+		
+	public function executeCommand(_arg_1:INotification):void{
+		var _local_2:Class = commandMap[_arg_1.getName()];// 如果"ApplicationNotificationStartup"==_arg_1.getName() 函数得以执行
+		if (_local_2 == null){
+			return;
+		};
+		var _local_3:ICommand = new (_local_2)();
+		_local_3.initializeNotifier(multitonKey);
+		_local_3.execute(_arg_1);
+	}
+----------------------->
+	public function registerObserver(_arg_1:String, _arg_2:IObserver):void{
+		if (observerMap[_arg_1] != null){
+			observerMap[_arg_1].push(_arg_2);
+		}
+		else {
+			observerMap[_arg_1] = [_arg_2];
+		};
+	}
+	///////////////////////////////////
+public function notifyObservers(_arg_1:INotification):void{
+	var _local_2:Array;
+	var _local_3:Array;
+	var _local_4:IObserver;
+	var _local_5:Number;
+	if (observerMap[_arg_1.getName()] != null){
+		_local_2 = (observerMap[_arg_1.getName()] as Array);
+		_local_3 = new Array();
+		_local_5 = 0;
+		while (_local_5 < _local_2.length) {
+			_local_4 = (_local_2[_local_5] as IObserver);
+			_local_3.push(_local_4);
+			_local_5++;
+		};
+		_local_5 = 0;
+		while (_local_5 < _local_3.length) {
+			_local_4 = (_local_3[_local_5] as IObserver);
+			_local_4.notifyObserver(_arg_1);
+			_local_5++;
+		};
+	};
+}
+////////////////////////////////////////////
+	public function sendNotification(_arg_1:String, _arg_2:Object=null, _arg_3:String=null):void{
+		notifyObservers(new Notification(_arg_1, _arg_2, _arg_3));
+	}////问题来了 谁发来的通知？第一个参数值="ApplicationNotificationStartup",
+----------------------------->
+        public function _SafeStr_3061(_arg_1:_SafeStr_57):void{
+            sendNotification(_SafeStr_59.STARTUP, _arg_1);
+        }
+-------------------------------->
+		private function _SafeStr_18949(_arg_1:Event=null):void{
+            removeEventListener(Event.ADDED_TO_STAGE, this._SafeStr_18949);
+            Settings.parsePlayerVersion();
+            var _local_2:_SafeStr_57 = new _SafeStr_57(this, this.stage);///////////查找参数来源
+            this._SafeStr_5717 = _SafeStr_63.getInstance();
+            this._SafeStr_5717._SafeStr_3061(_local_2);/////////////////////////////////
+            stage.dispatchEvent(new Event(Event.INIT));
+            this.forwardEventDispatch(new Event(Event.INIT));
+        }
+------------------------------------>
