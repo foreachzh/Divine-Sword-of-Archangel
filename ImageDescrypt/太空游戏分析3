@@ -1,0 +1,131 @@
+setSecretKey第一个参数的来源:
+--->
+	public function _SafeStr_3398(_arg_1:ByteArray, _arg_2:BigInteger, _arg_3:BigInteger):void{
+		this._SafeStr_14578.setSecretKey(_arg_1, _arg_2, _arg_3);
+	}
+---->
+	public function _SafeStr_12154(_arg_1:ByteArray, _arg_2:BigInteger, _arg_3:BigInteger):void{
+		this._SafeStr_3309._SafeStr_3336._SafeStr_3398(_arg_1, _arg_2, _arg_3);
+	}
+----->
+class _SafeStr_1401{
+	public static function run(_arg_1:_SafeStr_795):void{// 唯一被调用
+		var _local_2:_SafeStr_58 = _SafeStr_4106._SafeStr_3503();
+		var _local_3:BigInteger = _local_2._SafeStr_12153();
+		var _local_4:BigInteger = _SafeStr_152._SafeStr_3338;
+		_local_2._SafeStr_12154(_arg_1._SafeStr_12155, _local_4, _local_3);
+	}
+}
+------>
+class _SafeStr_420{
+    _SafeStr_5900[_SafeStr_795.ID] = _SafeStr_1401;// 唯一被调用
+	///////////
+	public static function execute(_arg_1:ICommand):void{
+		var _local_4:Object;
+		var _local_5:ICommand;
+		if (Settings.traceCom){
+			_SafeStr_1604._SafeStr_3330._SafeStr_3331(_arg_1);
+		};
+		var _local_2:int = _arg_1._SafeStr_5709();
+		count++;
+		var _local_3:Class = (_SafeStr_5900[_local_2] as Class);// 查找ID对应类
+		if (_local_3 == null){
+			EventStreamClient.track("flash.error", {
+				"message":("Handler not found for command : " + [_local_2, getQualifiedClassName(_arg_1)]),
+				"build":Version.BUILD
+			});
+		}
+		else {
+			if ((_local_3.run is Function)){
+				((_local_3.run as Function)(_arg_1));//翻译:_SafeStr_1401 varObj = new _SafeStr_1401; varObj.run(_SafeStr_795 _arg_1);//查找arg_1的来源
+			}
+			else {
+				_local_4 = new (_local_3)();
+				if ((_local_4 is ICommand)){
+					_local_5 = (_local_4 as ICommand);
+					_local_5.initializeNotifier(_SafeStr_63._SafeStr_3627);
+					_local_5.execute(new ServerCommandNotification(_arg_1));
+				};
+			};
+		};
+	}
+	// 查找_SafeStr_420。execute(_SafeStr_795 xxx)的直接调用,无果;搜索间接调用
+------->
+	间接调用一处:
+		this.handler._SafeStr_4175 = _SafeStr_420.execute;
+		_SafeStr_420.init();
+		
+	间接调用2处:// 排除
+        public static function run(_arg_1:_SafeStr_870):void{
+            TweenNano.delayedCall((_arg_1._SafeStr_12152 / 1000), _SafeStr_420.execute, [new _SafeStr_137(("0|i|" + _arg_1.mapID))]);
+        }
+        public static function delayedCall(_arg_1:Number, _arg_2:Function, _arg_3:Array=null, _arg_4:Boolean=false):TweenMax{
+            return (new TweenMax(_arg_2, 0, {
+                "delay":_arg_1,
+                "onComplete":_arg_2,
+                "onCompleteParams":_arg_3,
+                "immediateRender":false,
+                "useFrames":_arg_4,
+                "overwrite":0
+            }));
+        }
+-------->
+		
+        private function parseData(input:IDataInput):void{
+            var before:int;
+            var msgByteArray:ByteArray;
+            var msgByteArrayDecoded:ByteArray;
+            var msgHeaderByteArray:ByteArray;
+            var msgHeaderByteArrayDecoded:ByteArray;
+            var streamLength:uint;
+            var command:ICommand;
+            do  {
+                before = input.bytesAvailable;
+                if (this._SafeStr_14575._SafeStr_5905()){
+                    if (before >= this._SafeStr_14575._SafeStr_5906()){
+                        msgByteArray = new ByteArray();
+                        this._SafeStr_14576.readBytes(msgByteArray, 0, this._SafeStr_14575._SafeStr_5906());
+                        msgByteArrayDecoded = this._SafeStr_14578.decode(msgByteArray);
+                        command = this._SafeStr_14579(msgByteArrayDecoded);// 这里需要解密，然后当密钥还不存在的时候，怎么解密？
+                        this._Safe_420_execute(command);// 唯一被调用
+                        goto _label_1;
+                        error = error;
+                        EventStreamClient.track("flash.error", {
+                            "message":___slot_1.message,
+                            "name":___slot_1.name,
+                            "errorID":___slot_1.errorID,
+                            "stackTrace":___slot_1.getStackTrace(),
+                            "build":Version.BUILD
+                        });
+                        
+                    _label_1: 
+                        this._SafeStr_14575.reset();
+                    }
+                    else {
+                    };
+                }
+                else {
+                    if (before > _SafeStr_5903){
+                        msgHeaderByteArray = new ByteArray();
+                        this._SafeStr_14576.readBytes(msgHeaderByteArray, 0, 2);
+                        msgHeaderByteArrayDecoded = this._SafeStr_14578.decode(msgHeaderByteArray);
+                        streamLength = msgHeaderByteArrayDecoded.readUnsignedShort();
+                        if (streamLength == 0xFFFF){
+                            if (before < _SafeStr_5904){
+                                msgHeaderByteArrayDecoded.position = (msgHeaderByteArrayDecoded.position - _SafeStr_5903);
+                                continue;
+                            };
+                            this._SafeStr_14576.readBytes(msgHeaderByteArray, 0, 4);
+                            msgHeaderByteArrayDecoded = this._SafeStr_14578.decode(msgHeaderByteArray);
+                            streamLength = msgHeaderByteArrayDecoded.readUnsignedInt();
+                        };
+                        if (streamLength > 0){
+                            this._SafeStr_14575.setLength(streamLength);
+                        };
+                    };
+                };
+            } while ((((before > _SafeStr_5903)) && ((before >= this._SafeStr_14575._SafeStr_5906()))));
+        }
+    }
+// 在没有密钥的情况下 报文能发出去吗。发出去了怎样处理？
+// 分两种情况 有密钥&没密钥
