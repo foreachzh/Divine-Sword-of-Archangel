@@ -1,0 +1,56 @@
+     protected function onReceiveData(param1:ProgressEvent) : void
+      {
+         var _loc4_:int = 0;
+         var _loc5_:uint = 0;
+         var _loc6_:ByteArray = null;
+         if(this.m_socket.bytesAvailable <= 0)
+         {
+            return;
+         }
+         this.m_socket.readBytes(this.receiveBuf,this.receiveBuf.length);
+         this.receiveBuf.position = 0;
+         var _loc2_:Boolean = false;
+         while(this.receiveBuf.bytesAvailable > 4)
+         {
+            this.msgLen = this.receiveBuf.readInt();
+            if((this.msgLen & 16777216) != 0)
+            {
+               _loc2_ = true;
+               this.msgLen = this.msgLen & 16777215;
+            }
+            else
+            {
+               _loc2_ = false;
+            }
+            if(this.receiveBuf.bytesAvailable >= this.msgLen && this.msgLen > 0)
+            {
+               _loc4_ = this.receiveBuf.readInt();
+               this.msgBuf.length = 0;
+               if(this.msgLen > 4)
+               {
+                  this.receiveBuf.readBytes(this.msgBuf,0,this.msgLen - 4);
+               }
+               if(_loc2_)
+               {
+                  this.msgBuf.uncompress();
+               }
+               if(this._receiveFun != null)
+               {
+                  this._receiveFun.call(null,_loc4_,this.msgBuf);
+               }
+               continue;
+            }
+            this.receiveBuf.position = this.receiveBuf.position - 4;
+            break;
+         }
+         var _loc3_:int = this.receiveBuf.bytesAvailable;
+         if(_loc3_ > 0)
+         {
+            _loc5_ = this.receiveBuf.position;
+            _loc6_ = new ByteArray();
+            _loc6_.position = 0;
+            _loc6_.writeBytes(this.receiveBuf,_loc5_,_loc3_);
+            this.receiveBuf = _loc6_;
+         }
+         this.receiveBuf.length = _loc3_;
+      }
