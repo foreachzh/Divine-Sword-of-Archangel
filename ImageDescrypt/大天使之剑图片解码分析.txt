@@ -1,0 +1,118 @@
+
+1.搞清图片加密；(完成)
+2.解码收发报文(完成)；熟悉流程(1.找到人物信息;2.喊话信息;3.任务信息;4.地图信息;5.背包信息)；
+3.实现自动打怪；
+4.自动升至50级；
+
+查找没加密的图片：
+ 背景图片没有加密
+http://res1.dts.37wan.com/res_cndts/art/res/map/mapres/ground/mu_ytlds_small_fw/bgfm312_000100.jpg
+
+com.f1.view.mapeditor.bgView;com.view.RoffsContainer;com.f1.view.mapeditor.BgGPUView
+	public static const MAP_MAPRES_PATH:String = "art/res/map/mapres/";
+
+      public function addBg() : void
+      {
+         var _loc1_:* = null;
+         if(this.bgSrc)
+         {
+            Log.log("加载背景",this.bgSrc);
+            _loc1_ = this.bgSrc + "/small.jpg";
+            VResManager.load(_loc1_,this.loadSmallBgOK,null,this.loadSmallBgFail,this.progressFun);
+         }
+      }
+
+图片解密：
+ _loc2_ = "res/image/playerzone/zones_" + _loc1_ + ".png";
+com.f1.ui.image.Image
+      public function load(param1:String, param2:Function = null, param3:Function = null, param4:Function = null, param5:Boolean = false, param6:Boolean = false) : void
+      {
+         if(this.bitmapData != null && this._url == param1 && this.bmWidth != 0)
+         {
+            if(param2 != null)
+            {
+               param2(this.bitmapData);
+            }
+            return;
+         }
+         this.completeFunc = param2;
+         this.disposeBm(this._url);
+         this._url = param1;
+         if(param1 != null && param1 != "")
+         {
+            VResManager.load(param1,this.completeHandler,[param1],param3,param4,param5,false,param6);
+         }
+      }
+//////////////////////////////////////////////////////////////////////////////////
+      public static function load(param1:String, param2:Function = null, param3:Array = null, param4:Function = null, param5:Function = null, param6:Boolean = false, param7:Boolean = false, param8:Boolean = false, param9:int = 0, param10:Boolean = false) : void
+      {
+         getInstance().loadRes(param1,param2,param3,param4,param5,param6,param7,param8,param9,param10);
+      }
+//////////////////////////////////////////////////////////////////////////////////////
+      private function loadRes(param1:String, param2:Function, param3:Array, param4:Function, param5:Function, param6:Boolean, param7:Boolean, param8:Boolean, param9:int = 0, param10:Boolean = false) : void
+      {
+         var _loc11_:* = this._resDic[param1];
+         if(_loc11_)
+         {
+            if(param2 != null)
+            {
+               if(null == param3)
+               {
+                  param2.apply(null,[_loc11_]);
+               }
+               else
+               {
+                  param3.unshift(_loc11_);
+                  param2.apply(null,param3);
+               }
+            }
+            return;
+         }
+         this.loadOneRes(param1,param2,param3,param4,param5,param6,null,param7,param9,param8,param10);
+         this.startLoad();
+      }
+//////////////////////////////////////////////////////////////////////////////////
+      private function loadOneRes(param1:String, param2:Function, param3:Array, param4:Function, param5:Function, param6:Boolean, param7:VResGroupInfo, param8:Boolean, param9:int = 0, param10:Boolean = false, param11:Boolean = false) : void
+      {
+         var _loc12_:VResLoadObj = null;
+         _loc12_ = this.getLoadObjByURL(param1);
+         if(_loc12_)
+         {
+            if(_loc12_.completeFuns.indexOf(param2) == -1)
+            {
+               _loc12_.addCallBack(param2,param3,param4,param5);
+            }
+            return;
+         }
+         var _loc13_:VResLoader = this._loaderDic[param1];
+         if(_loc13_)
+         {
+            if(_loc13_.loading)
+            {
+               if(_loc13_.completeFuns.indexOf(param2) == -1)
+               {
+                  _loc13_.addCallBack(param2,param3,param4,param5);
+               }
+               return;
+            }
+         }
+         _loc12_ = new VResLoadObj();
+         _loc12_.url = param1;
+         _loc12_.asByteArray = param8;
+         _loc12_.keep = param6;
+         _loc12_.size = LoadHelper.getFileSize(param1,param11);
+         _loc12_.completeFuns.push(param2);
+         _loc12_.callBackParams.push(param3);
+         _loc12_.errFuns.push(param4);
+         _loc12_.progressFuns.push(param5);
+         _loc12_.ignoreMD5 = param10;
+         _loc12_.pngToSwf = param11;
+         _loc12_.preLoad = param9;
+         if(param7)
+         {
+            _loc12_.groupInfo = param7;
+            param7.totalSize = param7.totalSize + _loc12_.size;
+            param7.needLoad++;
+         }
+         this._loadObjArr.push(_loc12_);
+      }
